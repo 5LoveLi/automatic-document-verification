@@ -7,6 +7,7 @@ from src import errorList
 
 
 def font(doc):
+    error_list = []
     for paragraph in doc.paragraphs:
         if paragraph.style.name != 'Heading 1' and paragraph.style.name != 'Heading 2' and paragraph.style.name != 'Heading 3':
 
@@ -14,27 +15,35 @@ def font(doc):
                 font_name = run.font.name
 
                 if font_name is not None and font_name != 'Times New Roman':
-                    print("\033[31m {}\033[0m" .format(errorList.Error.check(font_name, '#', 13)))
+                    error_list.append(errorList.error[13])
+                    print("\033[31m {}\033[0m" .format(errorList.error[13]))
 
                 font_size = run.font.size
                 if font_size is not None and font_size.pt != 14:
-                    print("\033[31m {}\033[0m" .format(errorList.Error.check(str(font_size.pt), '#', 14)))
+                    error_list.append(errorList.error[14])
+                    print("\033[31m {}\033[0m" .format(errorList.error[14]))
 
                 font_color = run.font.color.rgb
                 if font_color is not None and font_color != (0, 0, 0):
-                    print("\033[31m {}\033[0m" .format(errorList.Error.check('#', '#', 16)))
+                    error_list.append(errorList.error[16])
+                    print("\033[31m {}\033[0m" .format(errorList.error[16]))
 
                 if not(not run.font.italic and not run.font.bold and not run.font.underline):
-                    print("\033[31m {}\033[0m" .format(errorList.Error.check('#', '#', 17)))
+                    error_list.append(errorList.error[17])
+                    print("\033[31m {}\033[0m" .format(errorList.error[17]))
 
             if paragraph.paragraph_format.line_spacing != 1.5:
                 p = paragraph.paragraph_format.line_spacing
-                print("\033[31m {}\033[0m" .format((errorList.Error.check(p, '#', 15))))
+                error_list.append(errorList.error[15])
+                print("\033[31m {}\033[0m" .format(errorList.error[15]))
+    
+    return error_list
 
 
 def header(doc):
     # Проверка заголовков разделов
     # section_num = 1
+    error_list = []
     for paragraph in doc.paragraphs:
         alignment = paragraph.alignment
         if paragraph.style.name == 'Heading 1' and alignment != WD_PARAGRAPH_ALIGNMENT.CENTER:
@@ -42,44 +51,54 @@ def header(doc):
 
             # Проверка отсутствия точки в конце
             if section_text.endswith('.'):
-                print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',18)))
+                error_list.append(errorList.error[18])
+                print("\033[31m {}\033[0m" .format(errorList.error[18]))
 
             # Проверка строчных букв
             if not any(letter.islower() for letter in section_text):
-                print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',19)))
+                error_list.append(errorList.error[19])
+                print("\033[31m {}\033[0m" .format(errorList.error[19]))
 
             if section_text[0].islower():
-                print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',20)))
+                error_list.append(errorList.error[20])
+                print("\033[31m {}\033[0m" .format(errorList.error[20]))
 
             # Проверка полужирного шрифта
             if not paragraph.runs[0].bold:
-                print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',21)))
+                error_list.append(errorList.error[21])
+                print("\033[31m {}\033[0m" .format(errorList.error[21]))
 
             # Проверка расположения слева
             if paragraph.alignment != None:
-                print("\033[31m {}\033[0m" .format(errorList.Error.check('справа','#',22)))
+                error_list.append(errorList.error[22])
+                print("\033[31m {}\033[0m" .format(errorList.error[22]))
 
             # Проверка отсутствия подчеркивания
             if paragraph.runs[0].underline:
-                print("\033[31m {}\033[0m" .format(errorList.Error.check('справа','#',23)))
+                error_list.append(errorList.error[23])
+                print("\033[31m {}\033[0m" .format(errorList.error[23]))
 
             # Проверка цвета заголовка
             if paragraph.runs[0].font.color.rgb != RGBColor(0, 0, 0):
-                print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',16)))
+                error_list.append(errorList.error[16])
+                print("\033[31m {}\033[0m" .format(errorList.error[16]))
 
             # Проверка абзацного отступа
             if paragraph.paragraph_format.first_line_indent != 450215:
-                print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',24)))
+                error_list.append(errorList.error[24])
+                print("\033[31m {}\033[0m" .format(errorList.error[24]))
                 # print("заголовков разделов")
 
             if paragraph.paragraph_format.line_spacing != 1.5:
                 p = paragraph.paragraph_format.line_spacing
-                print("\033[31m {}\033[0m" .format((errorList.Error.check(p, '#', 15))))
+                error_list.append(errorList.error[15])
+                print("\033[31m {}\033[0m" .format(errorList.error[15]))
 
             for run in paragraph.runs:
                 font_name = run.font.name
                 if font_name != 'Times New Roman':
-                    print("\033[31m {}\033[0m" .format(errorList.Error.check(font_name,'#',13)))
+                    error_list.append(errorList.error[13])
+                    print("\033[31m {}\033[0m" .format(errorList.error[13]))
 
             # Проверка нумерации
             # if section_text[0] == str(section_num) + " ":
@@ -90,89 +109,91 @@ def header(doc):
             # print('Проверен 1-ый заголовок')
         continue
 
+    return error_list
 
-    # Проверка заголовков подразделов
-    for paragraph in doc.paragraphs:
-        if paragraph.style.name == 'Heading 2':
-            section_text = paragraph.text.strip()
 
-            # Проверка отсутствия точки в конце
-            if section_text.endswith('.'):
-                print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',18)))
+    # # Проверка заголовков подразделов
+    # for paragraph in doc.paragraphs:
+    #     if paragraph.style.name == 'Heading 2':
+    #         section_text = paragraph.text.strip()
 
-            # Проверка строчных букв
-            if not any(letter.islower() for letter in section_text):
-                print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',19)))
+    #         # Проверка отсутствия точки в конце
+    #         if section_text.endswith('.'):
+    #             print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',18)))
 
-            if section_text[0].islower():
-                print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',20)))
+    #         # Проверка строчных букв
+    #         if not any(letter.islower() for letter in section_text):
+    #             print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',19)))
 
-            # Проверка полужирного шрифта
-            if not paragraph.runs[0].bold:
-                print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',21)))
+    #         if section_text[0].islower():
+    #             print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',20)))
 
-            # Проверка расположения слева
-            if paragraph.alignment != None:
-                print("\033[31m {}\033[0m" .format(errorList.Error.check('справа','#',22)))
+    #         # Проверка полужирного шрифта
+    #         if not paragraph.runs[0].bold:
+    #             print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',21)))
 
-            # Проверка отсутствия подчеркивания
-            if paragraph.runs[0].underline:
-                print("\033[31m {}\033[0m" .format(errorList.Error.check('справа','#',23)))
+    #         # Проверка расположения слева
+    #         if paragraph.alignment != None:
+    #             print("\033[31m {}\033[0m" .format(errorList.Error.check('справа','#',22)))
 
-            # Проверка цвета заголовка
-            if paragraph.runs[0].font.color.rgb != RGBColor(0, 0, 0):
-                print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',16)))
+    #         # Проверка отсутствия подчеркивания
+    #         if paragraph.runs[0].underline:
+    #             print("\033[31m {}\033[0m" .format(errorList.Error.check('справа','#',23)))
 
-            # Проверка абзацного отступа
-            if paragraph.paragraph_format.first_line_indent != 450215:
-                print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',24)))
-                # print("заголовков подразделов")
+    #         # Проверка цвета заголовка
+    #         if paragraph.runs[0].font.color.rgb != RGBColor(0, 0, 0):
+    #             print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',16)))
 
-            if paragraph.paragraph_format.line_spacing != 1.5:
-                p = paragraph.paragraph_format.line_spacing
-                print("\033[31m {}\033[0m" .format((errorList.Error.check(p, '#', 15))))
+    #         # Проверка абзацного отступа
+    #         if paragraph.paragraph_format.first_line_indent != 450215:
+    #             print("\033[31m {}\033[0m" .format(errorList.Error.check('#','#',24)))
+    #             # print("заголовков подразделов")
 
-            for run in paragraph.runs:
-                font_name = run.font.name
-                if font_name != 'Times New Roman':
-                    print("\033[31m {}\033[0m" .format(errorList.Error.check(font_name,'#',13)))
+    #         if paragraph.paragraph_format.line_spacing != 1.5:
+    #             p = paragraph.paragraph_format.line_spacing
+    #             print("\033[31m {}\033[0m" .format((errorList.Error.check(p, '#', 15))))
 
-            # print('Проверен 2-ой заголовок')
-        continue
+    #         for run in paragraph.runs:
+    #             font_name = run.font.name
+    #             if font_name != 'Times New Roman':
+    #                 print("\033[31m {}\033[0m" .format(errorList.Error.check(font_name,'#',13)))
 
-    # Проверка основного заголовка
-    for paragraph in doc.paragraphs:
-        alignment = paragraph.alignment
-        if paragraph.style.name == 'Heading 1' and alignment == WD_PARAGRAPH_ALIGNMENT.CENTER:
-            section_text = paragraph.text.strip()
+    #         # print('Проверен 2-ой заголовок')
+    #     continue
 
-            # Проверка отсутствия точки в конце
-            if section_text.endswith('.'):
-                print(errorList.Error.check('#','#',18))
+    # # Проверка основного заголовка
+    # for paragraph in doc.paragraphs:
+    #     alignment = paragraph.alignment
+    #     if paragraph.style.name == 'Heading 1' and alignment == WD_PARAGRAPH_ALIGNMENT.CENTER:
+    #         section_text = paragraph.text.strip()
 
-            # Проверка строчных букв
-            if not section_text.isupper():
-                print(errorList.Error.check('#','#',25))
+    #         # Проверка отсутствия точки в конце
+    #         if section_text.endswith('.'):
+    #             print(errorList.Error.check('#','#',18))
 
-            # Проверка полужирного шрифта
-            if not paragraph.runs[0].bold:
-                print(errorList.Error.check('#','#',21))
+    #         # Проверка строчных букв
+    #         if not section_text.isupper():
+    #             print(errorList.Error.check('#','#',25))
 
-            # Проверка отсутствия подчеркивания
-            if paragraph.runs[0].underline:
-                print(errorList.Error.check('справа','#',23))
+    #         # Проверка полужирного шрифта
+    #         if not paragraph.runs[0].bold:
+    #             print(errorList.Error.check('#','#',21))
 
-            # Проверка цвета заголовка
-            if paragraph.runs[0].font.color.rgb != RGBColor(0, 0, 0):
-                print(errorList.Error.check('#','#',16))
+    #         # Проверка отсутствия подчеркивания
+    #         if paragraph.runs[0].underline:
+    #             print(errorList.Error.check('справа','#',23))
 
-            for run in paragraph.runs:
-                font_name = run.font.name
-                if font_name != 'Times New Roman':
-                    print(errorList.Error.check(font_name,'#',13))
+    #         # Проверка цвета заголовка
+    #         if paragraph.runs[0].font.color.rgb != RGBColor(0, 0, 0):
+    #             print(errorList.Error.check('#','#',16))
 
-            # print('Проверен 1-ый основной заголовок')
-        continue
+    #         for run in paragraph.runs:
+    #             font_name = run.font.name
+    #             if font_name != 'Times New Roman':
+    #                 print(errorList.Error.check(font_name,'#',13))
+
+    #         # print('Проверен 1-ый основной заголовок')
+    #     continue
 
 
 
