@@ -7,8 +7,15 @@ from docx import Document
 # import styleFont
 from src.typeCheck import styleFont
 
-document = Document('src/example/Enum.docx')
+document = Document('src/example/font1.docx')
 
+def document_verification(document):
+    for paragraph in document.paragraphs:
+        styleFont.font(paragraph)
+
+
+
+document_verification(document)
 # # (Поля) Проверка полей страниц.
 # section.indent(document)
 #
@@ -28,7 +35,7 @@ document = Document('src/example/Enum.docx')
 # section.numbering(document)
 
 # (Текст) Перечисления
-styleFont.find_lists(document)
+# styleFont.find_lists(document)
 
 # picture.explore_xml_structure(document)
 
