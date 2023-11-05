@@ -5,17 +5,21 @@ from docx import Document
 # import picture
 # import section
 # import styleFont
-from src.typeCheck import styleFont
+from src.typeCheck import styleFont, picture
+
 
 document = Document('src/example/font1.docx')
 
-def document_verification(document):
-    for paragraph in document.paragraphs:
-        styleFont.font(paragraph)
+# def document_verification(document):
+#     for paragraph in document.paragraphs:
+#         # styleFont.font(paragraph)
+#         pass
+
+picture.extract_images_from_docx(document)
 
 
 
-document_verification(document)
+# document_verification(document)
 # # (Поля) Проверка полей страниц.
 # section.indent(document)
 #

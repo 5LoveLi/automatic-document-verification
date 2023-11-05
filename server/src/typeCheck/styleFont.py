@@ -43,8 +43,8 @@ def all_header(paragraph) -> list:
     section_text = paragraph.text.strip()
 
     if section_text.endswith('.'):
-                error_list.append(errorList.error[18])
-                print("\033[31m {}\033[0m" .format(errorList.error[18]))
+        error_list.append(errorList.error[18])
+        print("\033[31m {}\033[0m" .format(errorList.error[18]))
 
         # Проверка строчных букв
     if not any(letter.islower() for letter in section_text):

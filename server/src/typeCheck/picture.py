@@ -1,27 +1,70 @@
-from docx import Document
-from docx.oxml import ns
+# from docx import Document
+# from docx.oxml import ns
+import re
+
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+
+from src import errorList
+from src.typeCheck import styleFont
+
+
 
 def extract_images_from_docx(document):
+    num = 0
+    
+    error_list = []
     extract_text = False
     next_paragraph = False
     for paragraph in document.paragraphs:
+        section_text = paragraph.text.strip()
         for run in paragraph.runs:
             if run._r.xml:
                 xml = run._r.xml
                 if '<wp:inline' in xml:
-                    extract_text = True
+                    num += 1
+                    print(f'картинка {num}:')
                     next_paragraph = True
+
         if next_paragraph:
             next_paragraph = False
             extract_text = True
+
         elif extract_text:
             text = paragraph.text
-            if text != '':
-                # print("Изображение подписано: ",text)
+            if 'Рисунок' in text:
                 extract_text = False
+
+                if  re.match(r"Рисунок \d+\.\d+", text):
+                    print('сверяем первую цифру с цифрой раздела ')
+
+                elif  re.match(r"Рисунок \d+", text) is None:
+                    error_list.append(errorList.error[43])
+                    print(errorList.error[43])
+
+                else:
+                    number = re.findall(r'\d+', text)[0]
+                    if int(number) != num:
+                        error_list.append(errorList.error[44])
+                        print(errorList.error[44])
+
+                # Проверка стиля текста
+                # error_list.append(styleFont.font(paragraph))
+
+                # Проверка что описание по центру
+                if paragraph.alignment != WD_ALIGN_PARAGRAPH.CENTER:
+                    error_list.append(errorList.error[41])
+                    print(errorList.error[41])
+                
+                # Проверка на точку в конце
+                if section_text.endswith('.'):
+                    error_list.append(errorList.error[42])
+                    print(errorList.error[42])
+
+                
             else:
-                print("Изображение не подписано!")
-                break
+                print(errorList.error[40])
+                error_list.append(errorList.error[40])
+                extract_text = False
 
 
 
